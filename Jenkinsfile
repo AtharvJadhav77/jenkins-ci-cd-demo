@@ -1,28 +1,45 @@
 pipeline {
     agent any
+
     stages {
-        stage('Checkout Code') {
+        stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/AtharvJadhav77/jenkins-ci-cd-demo.git'
+                git branch: 'main',
+                    credentialsId: 'github-creds',
+                    url: 'https://github.com/AtharvJadhav77/jenkins-ci-cd-demo.git'
             }
         }
-        stage('Install Dependencies') {
+
+        stage('Set up Python Environment') {
             steps {
+                echo 'Setting up virtual environment...'
+                sh 'python -m venv venv'
+                sh '. venv/bin/activate'
                 sh 'pip install -r requirements.txt'
             }
         }
-        stage('Run App') {
+
+        stage('Run Tests') {
             steps {
-                sh 'nohup python3 app.py &'
+                echo 'Running tests...'
+                sh '. venv/bin/activate && pytest'
+            }
+        }
+
+        stage('Build and Deploy') {
+            steps {
+                echo 'Build successful! Deploying application...'
+                // Example placeholder; add deployment steps here
             }
         }
     }
+
     post {
         success {
-            echo '✅ Flask app deployed successfully!'
+            echo '✅ Pipeline completed successfully!'
         }
         failure {
-            echo '❌ Deployment failed.'
+            echo '❌ Pipeline failed. Check logs for errors.'
         }
     }
 }
