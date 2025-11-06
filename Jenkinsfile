@@ -14,8 +14,7 @@ pipeline {
             steps {
                 echo 'Setting up virtual environment...'
                 sh 'python -m venv venv'
-                sh '. venv/bin/activate'
-                sh 'pip install -r requirements.txt'
+                sh '. venv/bin/activate && pip install -r requirements.txt'
             }
         }
 
